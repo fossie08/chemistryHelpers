@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titration Calculator</title>
+    <link href="titration.css" rel="stylesheet">
+</head>
+<body>
+<div class="calculator-container">
+    <h1>Titration Calculator</h1>
+
+    <form id="titrationForm">        
+        <label>
+            Concentration of Known Solution (mol/dm³):
+            <input type="number" id="knownConcentration" step="any" placeholder="e.g., 0.1 mol/dm³">
+        </label>
+
+        <label>
+            Volume of Known Solution Used (cm³):
+            <input type="number" id="volume" step="any" placeholder="e.g., 25 cm³">
+        </label>
+
+        <label>
+            Volume of Solution to Be Analysed (cm³):
+            <input type="number" id="analyteVolume" step="any" placeholder="e.g., 50 cm³">
+        </label>
+
+        <label>
+            Mole Ratio of Analyte : Titrant (e.g., 1:2 for Na₂CO₃ + 2HCl):
+            <input type="text" id="moleRatio" placeholder="e.g., 1:2">
+        </label>
+
+        <button type="button" onclick="calculateTitration()">Calculate</button>
+    </form>
+    <div class="result" id="result" hidden="true"></div>
+</div>
+    <script>
+        // Function to calculate titration with mole ratio
+        function calculateTitration() {
+            const knownConcentration = parseFloat(document.getElementById('knownConcentration').value);
+            const volume = parseFloat(document.getElementById('volume').value);
+            const analyteVolume = parseFloat(document.getElementById('analyteVolume').value);
+            const moleRatio = document.getElementById('moleRatio').value.trim();
+
+            if (isNaN(knownConcentration) || isNaN(volume) || isNaN(analyteVolume) || !moleRatio) {
+                document.getElementById('result').innerText = "Please fill in all the fields correctly.";
+                return;
+            }
+
+            // Parse the mole ratio
+            const [analyteMoles, titrantMoles] = moleRatio.split(':').map(Number);
+            if (!analyteMoles || !titrantMoles) {
+                document.getElementById('result').innerText = "Please enter a valid mole ratio (e.g., 1:2).";
+                return;
+            }
+
+            // Calculate adjusted concentration based on the mole ratio
+            const analyteMol = knownConcentration*(volume/1000.0);
+            const titrantMol = analyteMol*(titrantMoles/analyteMoles);
+            const outputConc = titrantMol/(analyteVolume/1000.0);
+
+            document.getElementById('result').style.display = "block";
+
+            document.getElementById('result').innerText = 
+                `Concentration of Analysed Solution: ${outputConc.toFixed(8)} mol/dm³`;
+        }
+    </script>
+
+</body>
+</html>
